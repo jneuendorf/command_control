@@ -1,4 +1,7 @@
 class Startable():
 
-    def start(self):
-        raise NotImplementedError("...")
+    def start(self, configuration):
+        raise NotImplementedError(
+            "start() needs to be implemented for module {}"
+            .format(self)
+        )
