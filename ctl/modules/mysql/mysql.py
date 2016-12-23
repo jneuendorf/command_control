@@ -5,6 +5,8 @@ from .configurations import configurations
 class MySql(lib.Module, lib.Restartable):
     """docstring for MySql"""
 
+    name = "mysql"
+
     # must not take any arguments
     def __init__(self):
         super().__init__()
@@ -13,10 +15,5 @@ class MySql(lib.Module, lib.Restartable):
     def get_tasks(self):
         return []
 
-    def supports(self, action):
-        return action in [
-            "start",
-            "stop",
-            "restart",
-            # "status",
-        ]
+    def start(self):
+        print("starting mysql...")

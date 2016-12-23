@@ -26,7 +26,7 @@ if __name__ == "__main__":
                     "An action cannot be declared after the first module.\n" +
                     "Got action '{}' ".format(arg) +
                     "after module " +
-                    "'{}'".format(module_args[-1].__class__.__name__.lower()) +
+                    "'{}'".format(module_args[-1].name) +
                     "."
                 )
         else:
@@ -34,6 +34,20 @@ if __name__ == "__main__":
 
     print(action_args)
     print(module_args)
+
+    for module in module_args:
+        for action in action_args:
+            if not module.supports(action):
+                sys.exit(
+                    "Module '{0}' does not support action '{1}'."
+                    .format(
+                        module
+                    )
+                )
+
+    for action in action_args:
+        for module in module_args:
+            module.do(action)
 
     # mysql = modules.mysql()
     # mysql = load_module("mysql")
