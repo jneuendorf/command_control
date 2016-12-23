@@ -1,1 +1,1 @@
-from .mysql import MySql # NOQA
+from .mysql import MySql as mysql # NOQA
