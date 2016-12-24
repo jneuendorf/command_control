@@ -2,21 +2,22 @@ from ... import lib
 from .configurations import configurations
 
 
-class MySql(lib.Module, lib.Restartable):
-    """docstring for MySql"""
+class Postgres(lib.Module, lib.Restartable):
+    """docstring for Postgres"""
 
-    name = "mysql"
+    name = "postgres"
 
     def __init__(self, used_configuration):
         super().__init__(configurations(), used_configuration)
 
-    # Usage: mysql.server {start|stop|restart|reload|force-reload|status}
+    # Usage: pg_ctl start -D $POSTGRES_PATH
     def exec_action(self, configuration, action):
         return self.run_command(
-            "{0} {1}"
+            "{0} {1} -D {2}"
             .format(
                 configuration["executable"],
-                action
+                action,
+                configuration["postgres_path"]
             )
         )
 

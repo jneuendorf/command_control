@@ -1,8 +1,8 @@
 # command_control
 Tool with simple command line usage for running similar task e.g. starting MySQL, stopping postgres etc.
-There are actions (e.g. start, stop) and targets (e.g. mysql, postgres).
-A task is an action combined with a target.
-A module bundles multiple tasks (for 1 target).
+There are actions (e.g. start, stop) and modules (e.g. mysql, postgres).
+Also there are global configurations which can influence the implementation of a module's action
+(e.g. the apache installed with homebrew might be started differently than the one bundled in XAMPP).
 
 ## Usage samples
 
