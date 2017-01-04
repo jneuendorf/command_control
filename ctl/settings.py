@@ -11,20 +11,8 @@ class AVAILABLE_CONFIGURATIONS(__enum__):
 
 used_configuration = AVAILABLE_CONFIGURATIONS.MAC_HOMEBREW
 
+# map project name to list of commands to be executed
 projects = {
-    # "amc": {
-    #     "location": "~/Developer/rails/amc",
-    #     "commands": [
-    #         "start mysql postgres",
-    #         # multiple items possible to avoid potential
-    #         # incompatible actions and modules:
-    #         # e.g.  action1 module1 + action2 module2
-    #         #       ~> if module2 does not support action1
-    #         #           this cannot be written as
-    #         #           'action1 action2 module1 module2'
-    #         # "init something_else",
-    #     ]
-    # },
     "amc": [
         "cd ~/Developer/rails/amc",
         "start mysql postgres",

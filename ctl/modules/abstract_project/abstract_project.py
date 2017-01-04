@@ -15,12 +15,12 @@ class AbstractProject(lib.Module, lib.Loadable):
         self.name = name
         self.commands = commands
 
-    # @Override
-    def do(self, action):
-        if settings._dry_run:
-            print("go to project location", end=" ")
-        method = getattr(self, action)
-        return method(self.configurations[self.used_configuration.name])
+    # # @Override
+    # def do(self, action):
+    #     if settings._dry_run:
+    #         print("go to project location", end=" ")
+    #     method = getattr(self, action)
+    #     return method(self.configurations[self.used_configuration.name])
 
     def load(self, configuration):
         """
@@ -66,7 +66,32 @@ class AbstractProject(lib.Module, lib.Loadable):
                     )
                 self.cd(configuration, modules)
 
+    # same as load but without special last `cd` command
+    # commands are executed in reversed order
     def unload(self, configuration):
+        parsed_commands = []
+        for command in reversed(self.commands):
+            parsed_commands.append(lib.parse_args(
+                command.split(),
+                self.used_configuration,
+                settings.projects
+            ))
+
+        for parsed_command in parsed_commands:
+            actions, modules = parsed_command
+            # execute actions normally
+            if actions != "cd":
+                for action in actions:
+                    for module in modules:
+                        module.do(
+                            module.inverse_action(action)
+                            if module.inverse_action(action)
+                            else action
+                        )
+            # special action: cd -> modules == path
+            else:
+                self.cd(configuration, modules)
+
         self.cd(configuration, "~")
 
     def cd(self, configuration, path):

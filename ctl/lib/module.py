@@ -3,16 +3,42 @@ import subprocess
 from .. import settings
 
 
-class Module():
-    """docstring for Module"""
+def make_inverse_actions_bidirectional(inverse_actions):
+    """Add inverse of all dict tuples to the dict."""
+    # tuples = inverse_actions.copy().items()
+    tuples = inverse_actions.items()
+    # for tup in inverse_actions.copy().items():
+    for tup in tuples:
+        inverse_actions[tup[1]] = tup[0]
+    return inverse_actions
+
+
+class ModuleMeta(type):
+
+    def __init__(cls, name, bases, dic):
+        super().__init__(name, bases, dic)
+        inverse_actions = {}
+        for base in reversed(bases):
+            for key, val in base.inverse_actions.items():
+                inverse_actions[key] = val
+        inverse_actions = make_inverse_actions_bidirectional(inverse_actions)
+        cls.inverse_actions = inverse_actions
+
+
+class Module(metaclass=ModuleMeta):
+    """
+    Super class of all modules.
+    Each module has a 'name' and
+    a directory of related actions ('inverse_actions').
+    These two variables are defined in sub classes.
+    Typically in the 'interface' classes.
+    """
 
     name = None
+    inverse_actions = {}
 
     def __init__(self, configurations, used_configuration):
-        if used_configuration.name in configurations:
-            self.configurations = configurations
-            self.used_configuration = used_configuration
-        else:
+        if used_configuration.name not in configurations:
             raise ValueError(
                 "Globally used configuration '{0}' "
                 "is not supported by module '{1}'."
@@ -23,9 +49,22 @@ class Module():
                     configurations,
                 )
             )
+        self.configurations = configurations
+        self.used_configuration = used_configuration
 
     def supports(self, action):
         return hasattr(self, action) and callable(getattr(self, action))
+
+    def inverse_action(self, action):
+        if not self.supports(action):
+            raise ValueError(
+                "Action '{}' is not supported for module '{}'."
+                .format(
+                    action,
+                    self.name
+                )
+            )
+        return self.inverse_actions.get(action)
 
     def do(self, action):
         if settings._dry_run:
@@ -36,7 +75,6 @@ class Module():
                 ),
                 end=" "
             )
-
         method = getattr(self, action)
         return method(self.configurations[self.used_configuration.name])
 

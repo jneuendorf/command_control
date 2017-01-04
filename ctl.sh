@@ -3,10 +3,12 @@
 # determine whether i am being called like `source ctl.sh ...` or not
 if [ "$0" == "$BASH_SOURCE" ]; then
     is_sourced=false
+    command_control_dir=`dirname $0`
 else
     is_sourced=true
+    command_control_dir=`dirname $BASH_SOURCE`
 fi
 
 # $@ == given arguments
-python3 ./main.py "$@" "$is_sourced" dry_run
-eval "`python3 ./main.py $@ $is_sourced real_run`"
+python3 $command_control_dir/main.py "$@" "$is_sourced" dry_run
+eval "`python3 $command_control_dir/main.py $@ $is_sourced real_run`"

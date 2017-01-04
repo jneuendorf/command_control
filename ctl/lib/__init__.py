@@ -33,6 +33,7 @@ def parse_args(args, used_configuration, projects):
                 used_configuration
             )
         # special case: cd /path/to/go/to
+        # this is the case often when loading a project
         if arg.lower() == "cd":
             if i != 0 or len(args) != 2:
                 raise ValueError(
@@ -60,7 +61,8 @@ def parse_args(args, used_configuration, projects):
     # only actions given
     if len(module_args) == 0:
         raise ValueError(
-            "No modules specified. Maybe there is a typo in a module..."
+            "No modules specified. "
+            "Maybe there is a typo in a module..."
         )
 
     for module in module_args:
