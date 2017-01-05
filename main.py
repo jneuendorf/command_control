@@ -19,11 +19,7 @@ if __name__ == "__main__":
         settings._is_sourced = is_sourced
         settings._dry_run = dry_run
 
-        action_args, module_args = lib.parse_args(
-            argv,
-            # settings.used_configuration,
-            # settings.projects
-        )
+        action_args, module_args = lib.parse_args(argv)
     except ValueError as e:
         sys.exit(str(e))
 
