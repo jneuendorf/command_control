@@ -21,15 +21,11 @@ if __name__ == "__main__":
 
         action_args, module_args = lib.parse_args(
             argv,
-            settings.used_configuration,
-            settings.projects
+            # settings.used_configuration,
+            # settings.projects
         )
     except ValueError as e:
         sys.exit(str(e))
-
-    # print(action_args)
-    # print(module_args)
-    # print("is souced?", is_sourced)
 
     for action in action_args:
         for module in module_args:

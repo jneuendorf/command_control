@@ -5,21 +5,22 @@ from .interfaces import Loadable # NOQA
 from .interfaces import Restartable # NOQA
 
 
-# ADDITIONAL PACKAGE VARIABLES
+# USED PACKAGES
 from .. import modules
+from .. import settings
 
 
 # HELPER FUNCTIONS IN CTL.PY
-def parse_args(args, used_configuration, projects):
+def parse_args(args):
     action_args = []
     module_args = []
     for i, arg in enumerate(args):
         module = None
         # try loading the according module
         if arg in modules.module_dict:
-            module = modules.module_dict[arg](used_configuration)
-        # try loading the according project
-        if arg in projects:
+            module = modules.module_dict[arg]()
+        # try (un)loading the according project
+        if arg in settings.projects:
             # arg is also the name of module
             if module is not None:
                 raise ValueError(
@@ -27,13 +28,9 @@ def parse_args(args, used_configuration, projects):
                     "as well as of a project. "
                     "Make sure there is no name ambiguity."
                 )
-            module = modules.abstract_project(
-                arg,
-                projects[arg],
-                used_configuration
-            )
+            module = modules.abstract_project(arg)
         # special case: cd /path/to/go/to
-        # this is the case often when loading a project
+        # this is often the case when loading a project
         if arg.lower() == "cd":
             if i != 0 or len(args) != 2:
                 raise ValueError(

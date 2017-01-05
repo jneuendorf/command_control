@@ -7,8 +7,8 @@ class Postgres(lib.Module, lib.Restartable):
 
     name = "postgres"
 
-    def __init__(self, used_configuration):
-        super().__init__(configurations(), used_configuration)
+    def __init__(self):
+        super().__init__(configurations())
 
     # Usage: pg_ctl start -D $POSTGRES_PATH
     def exec_action(self, configuration, action):

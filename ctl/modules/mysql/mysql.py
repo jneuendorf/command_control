@@ -7,8 +7,8 @@ class MySql(lib.Module, lib.Restartable):
 
     name = "mysql"
 
-    def __init__(self, used_configuration):
-        super().__init__(configurations(), used_configuration)
+    def __init__(self):
+        super().__init__(configurations())
 
     # Usage: mysql.server {start|stop|restart|reload|force-reload|status}
     def exec_action(self, configuration, action):

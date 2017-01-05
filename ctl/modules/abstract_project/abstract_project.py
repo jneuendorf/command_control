@@ -8,19 +8,26 @@ from .configurations import configurations
 class AbstractProject(lib.Module, lib.Loadable):
     """docstring for AbstractProject"""
 
-    name = "abstract_project"
-
-    def __init__(self, name, commands, used_configuration):
-        super().__init__(configurations(), used_configuration)
+    def __init__(self, name):
+        super().__init__(configurations())
         self.name = name
-        self.commands = commands
+        if name in settings.projects:
+            self.commands = settings.projects[name]
+        else:
+            raise ValueError(
+                "There is no project with name '{}'."
+                .format(name)
+            )
 
-    # # @Override
-    # def do(self, action):
-    #     if settings._dry_run:
-    #         print("go to project location", end=" ")
-    #     method = getattr(self, action)
-    #     return method(self.configurations[self.used_configuration.name])
+    # @Override
+    def _print_on_do(self, action):
+        if action not in ["load", "unload"]:
+            super()._print_on_do(action)
+        else:
+            print(
+                "{}ing {}........"
+                .format(action, self.name)
+            )
 
     def load(self, configuration):
         """
@@ -33,11 +40,7 @@ class AbstractProject(lib.Module, lib.Loadable):
         last_cd_command_idx = None
         parsed_commands = []
         for i, command in enumerate(self.commands):
-            parsed_command = lib.parse_args(
-                command.split(),
-                self.used_configuration,
-                settings.projects
-            )
+            parsed_command = lib.parse_args(command.split())
             parsed_commands.append(parsed_command)
             actions, modules = parsed_command
             if "cd" in actions:
@@ -71,11 +74,7 @@ class AbstractProject(lib.Module, lib.Loadable):
     def unload(self, configuration):
         parsed_commands = []
         for command in reversed(self.commands):
-            parsed_commands.append(lib.parse_args(
-                command.split(),
-                self.used_configuration,
-                settings.projects
-            ))
+            parsed_commands.append(lib.parse_args(command.split()))
 
         for parsed_command in parsed_commands:
             actions, modules = parsed_command
@@ -91,13 +90,10 @@ class AbstractProject(lib.Module, lib.Loadable):
             # special action: cd -> modules == path
             else:
                 self.cd(configuration, modules)
-
-        self.cd(configuration, "~")
+        self.cd(configuration, settings.unload_directory)
 
     def cd(self, configuration, path):
-        if settings._dry_run:
-            print("(cd {})".format(path))
-        elif settings._is_sourced:
+        if settings._dry_run or settings._is_sourced:
             print("cd {}".format(path))
         path = os.path.expanduser(path)
         os.chdir(path)

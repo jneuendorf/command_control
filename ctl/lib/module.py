@@ -5,15 +5,16 @@ from .. import settings
 
 def make_inverse_actions_bidirectional(inverse_actions):
     """Add inverse of all dict tuples to the dict."""
-    # tuples = inverse_actions.copy().items()
-    tuples = inverse_actions.items()
-    # for tup in inverse_actions.copy().items():
-    for tup in tuples:
-        inverse_actions[tup[1]] = tup[0]
+    for key, val in inverse_actions.copy().items():
+        inverse_actions[val] = key
     return inverse_actions
 
 
 class ModuleMeta(type):
+    """
+    This meta class is used for joining all inherited inverse actions
+    and making them bidirectional.
+    """
 
     def __init__(cls, name, bases, dic):
         super().__init__(name, bases, dic)
@@ -37,20 +38,19 @@ class Module(metaclass=ModuleMeta):
     name = None
     inverse_actions = {}
 
-    def __init__(self, configurations, used_configuration):
-        if used_configuration.name not in configurations:
+    def __init__(self, configurations):
+        if settings.used_configuration.name not in configurations:
             raise ValueError(
                 "Globally used configuration '{0}' "
                 "is not supported by module '{1}'."
                 "Configurations defined by module: {2}"
                 .format(
-                    used_configuration.name,
+                    settings.used_configuration.name,
                     self.name,
                     configurations,
                 )
             )
         self.configurations = configurations
-        self.used_configuration = used_configuration
 
     def supports(self, action):
         return hasattr(self, action) and callable(getattr(self, action))
@@ -68,15 +68,9 @@ class Module(metaclass=ModuleMeta):
 
     def do(self, action):
         if settings._dry_run:
-            print(
-                "{} {}".format(
-                    action,
-                    self.name
-                ),
-                end=" "
-            )
+            self._print_on_do(action)
         method = getattr(self, action)
-        return method(self.configurations[self.used_configuration.name])
+        return method(self.configurations[settings.used_configuration.name])
 
     def run_command(self, command):
         if settings._dry_run:
@@ -100,3 +94,12 @@ class Module(metaclass=ModuleMeta):
                 "successful": exit_status,
                 "message": response.decode("utf-8")
             }
+
+    def _print_on_do(self, action):
+        print(
+            "{} {}".format(
+                action,
+                self.name
+            ),
+            end=" "
+        )
