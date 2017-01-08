@@ -10,29 +10,36 @@ Also there are global configurations which can influence the implementation of a
 
 - python3.6+
 - `ctl.sh` made executable (e.g. with `chmod +x ctl.sh`)
+  - optionally, it can of course be renamed to just `ctl`
 
 
 ## Configuration
 
 All configurations for your local machine are set in `ctl/settings.py`.
 In the settings file the globally used configuration must be set.
-The default is `ctl.lib.AVAILABLE_CONFIGURATIONS.MAC_HOMEBREW`.
 Additionally projects can be defined.
+
+#### Modules
+
+A module implements actions for usually one binary.
+One example would be mysql that can be started, stopped and restarted.
+Each module has a set of configurations.
+The used configuration is determined by the `USED_CONFIGURATION` variable (from the settings).
+
 
 #### Projects
 
-Projects combine a location with actions and modules.
-When loading a project a associated modules are started and you will be taken to the project's location.
-Thus, projects are shortcuts for otherwise multiple calls of `ctl.sh` and make it very convenient to load your working environment.
+Projects are groups of multiple commands that would otherwise be multiple calls of `ctl.sh`.
+That makes it very convenient to load your working environment.
 
-Projects have 3 actions: `load`, `unload` and `cd`.
+Projects have 2 actions: `load` and `unload`.
 For example, it would be as easy as
 
 `ctl.sh load my_rails_project`
 
 to get a rails app started (maybe including `postgres` and `mongodb`) and change to the according directory.
 
-When done working `unload` will stop everything needed for the project and take you to your home directory.
+When done working `unload` will stop everything needed for the project and take you to the `PROJECT_UNLOAD_DIRECTORY` directory (defined in the settings).
 
 
 ## Usage samples
@@ -43,13 +50,7 @@ ctl.sh stop mysql
 ctl.sh restart mysql
 # start 2 modules
 ctl.sh start mysql postgres
+# load project (multiple actions)
 ctl.sh load project
 ctl.sh unload project
-ctl.sh cd predefined_location
 ```
-
-### Note
-
-The `cd` action is special and only takes parameter (the path to go to).
-Thus, no other modules can define that action.
-Also that implies that there must be exactly 2 parameters for the entire call (1 action + 1 parameter).
