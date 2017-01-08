@@ -57,6 +57,7 @@ class Module(metaclass=ModuleMeta):
         return hasattr(self, action) and callable(getattr(self, action))
 
     def inverse_action(self, action):
+        """This method is called when unloading a project."""
         if not self.supports(action):
             raise ValueError(
                 "Action '{}' is not supported for module '{}'."
@@ -65,7 +66,7 @@ class Module(metaclass=ModuleMeta):
                     self.name
                 )
             )
-        return self.inverse_actions.get(action)
+        return self.inverse_actions.get(action, action)
 
     def do(self, action):
         if _globals._dry_run:

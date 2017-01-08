@@ -83,11 +83,7 @@ class AbstractProject(lib.Module, lib.Loadable):
             if actions != "cd":
                 for action in actions:
                     for module in modules:
-                        module.do(
-                            module.inverse_action(action)
-                            if module.inverse_action(action)
-                            else action
-                        )
+                        module.do(module.inverse_action(action))
             # special action: cd -> modules == path
             else:
                 self.cd(configuration, modules)
