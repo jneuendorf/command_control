@@ -6,6 +6,7 @@ from .interfaces import Restartable # NOQA
 
 
 # USED PACKAGES
+from .. import _globals
 from .. import modules
 from .. import settings
 

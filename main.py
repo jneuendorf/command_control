@@ -2,7 +2,15 @@
 
 import sys
 
-from ctl import settings, lib
+from ctl import _globals, settings, lib
+
+# $ brew services list
+#   Name       Status  User Plist
+#   mysql      stopped
+#   php56      stopped
+#   php70      stopped
+#   postgresql stopped
+#   syncthing  stopped
 
 
 if __name__ == "__main__":
@@ -16,8 +24,8 @@ if __name__ == "__main__":
         is_sourced = True if argv[-2] == "true" else False
         argv = argv[1:-2]
         # make them 'globally' accessible
-        settings._is_sourced = is_sourced
-        settings._dry_run = dry_run
+        _globals._is_sourced = is_sourced
+        _globals._dry_run = dry_run
 
         action_args, module_args = lib.parse_args(argv)
     except ValueError as e:

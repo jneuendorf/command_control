@@ -1,5 +1,6 @@
 import subprocess
 
+from .. import _globals
 from .. import settings
 
 
@@ -39,13 +40,13 @@ class Module(metaclass=ModuleMeta):
     inverse_actions = {}
 
     def __init__(self, configurations):
-        if settings.used_configuration.name not in configurations:
+        if settings.USED_CONFIGURATION not in configurations:
             raise ValueError(
                 "Globally used configuration '{0}' "
                 "is not supported by module '{1}'."
                 "Configurations defined by module: {2}"
                 .format(
-                    settings.used_configuration.name,
+                    settings.USED_CONFIGURATION,
                     self.name,
                     configurations,
                 )
@@ -67,13 +68,14 @@ class Module(metaclass=ModuleMeta):
         return self.inverse_actions.get(action)
 
     def do(self, action):
-        if settings._dry_run:
+        if _globals._dry_run:
             self._print_on_do(action)
         method = getattr(self, action)
-        return method(self.configurations[settings.used_configuration.name])
+        return method(self.configurations[settings.USED_CONFIGURATION])
 
     def run_command(self, command):
-        if settings._dry_run:
+        if _globals._dry_run:
+            # print what gets executed behind the pseudo command
             print("({})".format(command))
         else:
             try:

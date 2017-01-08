@@ -1,5 +1,6 @@
 import os
 
+from ... import _globals
 from ... import lib
 from ... import settings
 from .configurations import configurations
@@ -59,7 +60,7 @@ class AbstractProject(lib.Module, lib.Loadable):
                     self.cd(configuration, modules)
             # last of the "cd" actions -> print for wrapper bash script's eval
             else:
-                if not settings._is_sourced:
+                if not _globals._is_sourced:
                     print(
                         "\n# WARNING:\n"
                         "#  Tried changing the directory "
@@ -90,10 +91,10 @@ class AbstractProject(lib.Module, lib.Loadable):
             # special action: cd -> modules == path
             else:
                 self.cd(configuration, modules)
-        self.cd(configuration, settings.unload_directory)
+        self.cd(configuration, settings.PROJECT_UNLOAD_DIRECTORY)
 
     def cd(self, configuration, path):
-        if settings._dry_run or settings._is_sourced:
+        if _globals._dry_run or _globals._is_sourced:
             print("cd {}".format(path))
         path = os.path.expanduser(path)
         os.chdir(path)
