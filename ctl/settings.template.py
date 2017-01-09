@@ -10,4 +10,15 @@ projects = {
         "cd ~/Developer/web/project1",
         "start apache mysql",
     ],
+    "another_project": {
+        "load": [
+            "cd ~/Developer/web/project1",
+            "start mysql",
+            # this action can't be inverted and should not be run on "unload"
+            "open atom",
+        ],
+        "unload": [
+            "stop mysql"
+        ],
+    }
 }
