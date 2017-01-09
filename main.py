@@ -4,14 +4,6 @@ import sys
 
 from ctl import _globals, settings, lib
 
-# $ brew services list
-#   Name       Status  User Plist
-#   mysql      stopped
-#   php56      stopped
-#   php70      stopped
-#   postgresql stopped
-#   syncthing  stopped
-
 
 if __name__ == "__main__":
     argv = list(sys.argv)
@@ -34,3 +26,12 @@ if __name__ == "__main__":
     for action in action_args:
         for module in module_args:
             module.do(action)
+
+# TODO: maybe this works more reliably
+# $ brew services list
+#   Name       Status  User Plist
+#   mysql      stopped
+#   php56      stopped
+#   php70      stopped
+#   postgresql stopped
+#   syncthing  stopped

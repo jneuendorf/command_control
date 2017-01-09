@@ -13,7 +13,23 @@ class AbstractProject(lib.Module, lib.Loadable):
         super().__init__(configurations())
         self.name = name
         if name in settings.projects:
-            self.commands = settings.projects[name]
+            project_data = settings.projects[name]
+            # load and unload keys are defined
+            if "load" in project_data:
+                if "unload" in project_data:
+                    self.load_commands = project_data["load"]
+                    self.unload_commands = project_data["unload"]
+                    self.auto_invert_actions = False
+                else:
+                    raise ValueError(
+                        "Project data must either be a list or "
+                        "a directory containing 'load' and 'unload'."
+                    )
+            # list of commands => unload_commands are implied
+            else:
+                self.load_commands = project_data
+                self.unload_commands = reversed(project_data)
+                self.auto_invert_actions = True
         else:
             raise ValueError(
                 "There is no project with name '{}'."
@@ -40,7 +56,7 @@ class AbstractProject(lib.Module, lib.Loadable):
         """
         last_cd_command_idx = None
         parsed_commands = []
-        for i, command in enumerate(self.commands):
+        for i, command in enumerate(self.load_commands):
             parsed_command = lib.parse_args(command.split())
             parsed_commands.append(parsed_command)
             actions, modules = parsed_command
@@ -74,7 +90,7 @@ class AbstractProject(lib.Module, lib.Loadable):
     # commands are executed in reversed order
     def unload(self, configuration):
         parsed_commands = []
-        for command in reversed(self.commands):
+        for command in self.unload_commands:
             parsed_commands.append(lib.parse_args(command.split()))
 
         for parsed_command in parsed_commands:
@@ -83,7 +99,10 @@ class AbstractProject(lib.Module, lib.Loadable):
             if actions != "cd":
                 for action in actions:
                     for module in modules:
-                        module.do(module.inverse_action(action))
+                        if self.auto_invert_actions:
+                            module.do(module.inverse_action(action))
+                        else:
+                            module.do(action)
             # special action: cd -> modules == path
             else:
                 self.cd(configuration, modules)
