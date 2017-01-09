@@ -11,7 +11,7 @@ class MySql(lib.Module, lib.Restartable):
         super().__init__(configurations())
 
     # Usage: mysql.server {start|stop|restart|reload|force-reload|status}
-    def exec_action(self, configuration, action):
+    def _exec_action(self, configuration, action):
         return self.run_command(
             "{0} {1}"
             .format(
@@ -21,10 +21,10 @@ class MySql(lib.Module, lib.Restartable):
         )
 
     def start(self, configuration):
-        return self.exec_action(configuration, "start")
+        return self._exec_action(configuration, "start")
 
     def stop(self, configuration):
-        return self.exec_action(configuration, "stop")
+        return self._exec_action(configuration, "stop")
 
     def restart(self, configuration):
-        return self.exec_action(configuration, "restart")
+        return self._exec_action(configuration, "restart")
