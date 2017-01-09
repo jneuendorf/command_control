@@ -19,6 +19,42 @@ All configurations for your local machine are set in `ctl/settings.py`.
 In the settings file the globally used configuration must be set.
 Additionally projects can be defined.
 
+The following variables must be defined:
+
+- `USED_CONFIGURATION (str)`
+- `PROJECT_UNLOAD_DIRECTORY (str)`
+- `projects (dict of list of str, dict of dict of list of str)`
+
+An example can be seen in `ctl/settings.template.py`:
+
+```python
+# The used configuration determines what module configuration will be chosen.
+# See each module's configurations.py.
+USED_CONFIGURATION = "MAC_HOMEBREW"
+
+PROJECT_UNLOAD_DIRECTORY = "~"
+
+projects = {
+    "my_web_project": [
+        "cd ~/Developer/web/project1",
+        "start apache mysql",
+    ],
+    "another_project": {
+        "load": [
+            "cd ~/Developer/web/project1",
+            "start mysql",
+            # this action can't be inverted and should not be run on "unload"
+            # thus it does not appear in "unload"
+            "open atom",
+        ],
+        "unload": [
+            "stop mysql"
+        ],
+    }
+}
+
+```
+
 #### Modules
 
 A module implements actions for usually one binary.

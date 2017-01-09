@@ -6,7 +6,7 @@ from .mysql import mysql # NOQA
 from .postgres import postgres # NOQA
 
 # make all modules accessible by name
-# key should match module_class.name
+# key should match module_class.name (this is what the user has to type)
 module_dict = {
     "abstract_project": abstract_project,
     "atom": atom,
