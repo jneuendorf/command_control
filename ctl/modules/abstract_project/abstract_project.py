@@ -7,7 +7,11 @@ from .configurations import configurations
 
 
 class AbstractProject(lib.Module, lib.Loadable):
-    """docstring for AbstractProject"""
+    """
+    This class is special as its name is not important.
+    Instead it will be instantiated if the module name (from the command line)
+    matches a key in settings.projects.
+    """
 
     def __init__(self, name):
         super().__init__(configurations())
