@@ -24,6 +24,11 @@ class AbstractProject(lib.Module, lib.Loadable):
                     self.load_commands = project_data["load"]
                     self.unload_commands = project_data["unload"]
                     self.auto_invert_actions = False
+                    _globals._current_project_settings = {
+                        key: val
+                        for key, val in project_data.items()
+                        if key not in {"load", "unload"}
+                    }
                 else:
                     raise ValueError(
                         "Project data must either be a list or "
@@ -34,6 +39,7 @@ class AbstractProject(lib.Module, lib.Loadable):
                 self.load_commands = project_data
                 self.unload_commands = reversed(project_data)
                 self.auto_invert_actions = True
+                # no change to _globals._current_project_settings
         else:
             raise ValueError(
                 "There is no project with name '{}'."
@@ -49,6 +55,10 @@ class AbstractProject(lib.Module, lib.Loadable):
                 "{}ing {}........"
                 .format(action, self.name)
             )
+
+    # # @Override
+    # def _find_setting(self, name):
+    #     return self.project_settings or super()._find_setting(name)
 
     def load(self, configuration):
         """

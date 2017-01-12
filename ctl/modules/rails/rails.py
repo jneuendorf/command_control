@@ -1,15 +1,26 @@
 from ... import lib
+from ... import settings
 from .configurations import configurations
 
 
 class Rails(lib.Module, lib.Restartable):
 
     name = "rails"
+    available_settings = [
+        "RAILS_DEV_LOG"
+    ]
+    default_settings = {
+        "RAILS_DEV_LOG": "log/development.log"
+    }
 
     def __init__(self):
         super().__init__(configurations())
 
     def start(self, configuration):
+        print(
+            "starting rails....RAILS_DEV_LOG = {}"
+            .format(self.get_setting("RAILS_DEV_LOG"))
+        )
         return self.run_command(
             "{0} server"
             .format(configuration["executable"])
@@ -20,6 +31,5 @@ class Rails(lib.Module, lib.Restartable):
         return self.run_command("rm tmp/pids/server.pid")
 
     # def log(self, configuration):
-    #     # TODO: 1. how to stream output (sometimes)?
-    #     # TODO: 2. how to provide project (or project kind) related options (e.g. location of 'development.log')
+    #     # TODO: how to stream output (sometimes)?
     #     return self.run_command("tail -f log/development.log | grep --line-buffered --ignore-case $pattern --before-context=$before --after-context=$after")

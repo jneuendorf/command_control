@@ -38,6 +38,8 @@ class Module(metaclass=ModuleMeta):
 
     name = None
     inverse_actions = {}
+    available_settings = []
+    default_settings = {}
 
     def __init__(self, configurations):
         if settings.USED_CONFIGURATION not in configurations:
@@ -67,6 +69,27 @@ class Module(metaclass=ModuleMeta):
                 )
             )
         return self.inverse_actions.get(action, action)
+
+    def get_setting(self, name):
+        """
+        This method contains the boilerplate code (exception handling).
+        The actual setting retrieval is done in self._find_setting().
+        """
+        if name in self.available_settings and name in self.default_settings:
+            try:
+                return self._find_setting(name)
+            except Exception as e:
+                raise "dunno.............."
+        else:
+            raise ValueError(
+                "Cannot get setting with name '{}'. "
+                "Check the class variables 'available_settings' and "
+                "'default_settings' of module '{}'"
+                .format(
+                    name,
+                    self.name
+                )
+            )
 
     def do(self, action):
         if _globals._dry_run:
@@ -105,4 +128,12 @@ class Module(metaclass=ModuleMeta):
                 self.name
             ),
             end=" "
+        )
+
+    def _find_setting(self, name):
+        # we know that `self.default_settings` contains `name`
+        return (
+            _globals._current_project_settings.get(name) or
+            settings.__dict__.get(name) or
+            self.default_settings[name]
         )

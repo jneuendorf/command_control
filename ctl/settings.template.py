@@ -12,12 +12,18 @@ projects = {
     "another_project": {
         "load": [
             "cd ~/Developer/web/project1",
-            "start mysql",
+            "start mysql rails",
             # this action can't be inverted and should not be run on "unload"
             "open atom",
         ],
         "unload": [
-            "stop mysql"
+            "stop mysql rails"
         ],
+        # additional settings for this project only
+        # (these override the global settings below)
+        "RAILS_DEV_LOG": "log/dev.log"
     }
 }
+
+# provide setting for all rails modules
+RAILS_DEV_LOG = "log/development.log"
