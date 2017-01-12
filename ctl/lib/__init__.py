@@ -18,8 +18,8 @@ def parse_args(args):
     for i, arg in enumerate(args):
         module = None
         # try loading the according module
-        if arg in modules.module_dict:
-            module = modules.module_dict[arg]()
+        if hasattr(modules, arg):
+            module = getattr(modules, arg)()
         # try (un)loading the according project
         if arg in settings.projects:
             # arg is also the name of module

@@ -134,6 +134,6 @@ class Module(metaclass=ModuleMeta):
         # we know that `self.default_settings` contains `name`
         return (
             _globals._current_project_settings.get(name) or
-            settings.__dict__.get(name) or
+            getattr(settings, name, None) or
             self.default_settings[name]
         )

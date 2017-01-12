@@ -56,10 +56,6 @@ class AbstractProject(lib.Module, lib.Loadable):
                 .format(action, self.name)
             )
 
-    # # @Override
-    # def _find_setting(self, name):
-    #     return self.project_settings or super()._find_setting(name)
-
     def load(self, configuration):
         """
         When loading a project multiple `cd` actions are possible.
